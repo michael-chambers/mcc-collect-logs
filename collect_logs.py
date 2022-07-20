@@ -7,6 +7,13 @@ import readline
 import subprocess
 import os
 
+def listClusters(clusters):
+  y = 1
+  for x in clusters['items']:
+    nameString = x['metadata']['name']
+    print(y, "\t", nameString)
+    y = y + 1
+
 # these settings allow for tab-completing file paths
 readline.set_completer_delims(' \t\n=')
 readline.parse_and_bind("tab: complete")
@@ -19,9 +26,12 @@ config.load_kube_config(mgmtKubeconfig)
 # check if there is more than one cluster in the default namespace
 # if there is, ask the user which one is the the management cluster
 custom_api_client = client.CustomObjectsApi()
-defaultClusters = custom_api_client.list_namespaced_custom_object(group="cluster.k8s.io", version="v1alpha1", namespace="default",plural="clusters")
+defaultClusters = custom_api_client.list_namespaced_custom_object(group="cluster.k8s.io", version="v1alpha1", namespace="default", plural="clusters")
 if len(defaultClusters['items']) > 1:
-  mgmtClusterName = input("Multiple clusters detected in MCC's default namespace, please specify the name of the Management cluster: ")
+  print("Multiple clusters detected in MCC's default namespace")
+  listClusters(defaultClusters)
+  i = input("Please specify the Management cluster (#): ")
+  mgmtClusterName = defaultClusters['items'][int(i) - 1]['metadata']['name']
 else:
   mgmtClusterName = defaultClusters['items'][0]['metadata']['name']
 print("The selected management cluster is " + mgmtClusterName)
@@ -30,18 +40,11 @@ print("The selected management cluster is " + mgmtClusterName)
 privateKey = input("Private key file for the cluster for which you want logs (path): ")
 privateKey = os.path.realpath(privateKey)
 
-# gather cluster name and determine cluster namespace
-# clusterName = input("Cluster for which you want logs (name): ")
-allClusters = custom_api_client.list_cluster_custom_object(group="cluster.k8s.io", version="v1alpha1", plural="clusters")
-y = 1
-print("The following clusters were detected:")
-for x in allClusters['items']:
-  nameString = x['metadata']['name']
-  print(y, "\t", nameString)
-  y = y + 1
-
 # display the clusters found in MCC and let the user decide from a list
 # then automatically find the namespace (MCC project) of the chosen cluster
+allClusters = custom_api_client.list_cluster_custom_object(group="cluster.k8s.io", version="v1alpha1", plural="clusters")
+print("The following clusters were detected:")
+listClusters(allClusters)
 i = input("Please specify the cluster you want to collect logs for (#): ")
 clusterName = allClusters['items'][int(i) - 1]['metadata']['name']
 clusterNamespace = allClusters['items'][int(i) - 1]['metadata']['namespace']
