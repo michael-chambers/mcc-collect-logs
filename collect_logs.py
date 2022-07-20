@@ -7,6 +7,7 @@ import readline
 import subprocess
 import os
 
+# these settings allow for tab-completing file paths
 readline.set_completer_delims(' \t\n=')
 readline.parse_and_bind("tab: complete")
 
@@ -22,7 +23,6 @@ defaultClusters = custom_api_client.list_namespaced_custom_object(group="cluster
 if len(defaultClusters['items']) > 1:
   mgmtClusterName = input("Multiple clusters detected in MCC's default namespace, please specify the name of the Management cluster: ")
 else:
-  # mgmtClusterName = subprocess.run(["kubectl", "--kubeconfig", mgmtKubeconfig, "--namespace", "default", "get", "cluster", "-o=jsonpath={'.items[0].metadata.name'}"], stdout=subprocess.PIPE, text=True, shell=False)
   mgmtClusterName = defaultClusters['items'][0]['metadata']['name']
 print("The selected management cluster is " + mgmtClusterName)
 
@@ -33,7 +33,6 @@ privateKey = os.path.realpath(privateKey)
 # gather cluster name and determine cluster namespace
 # clusterName = input("Cluster for which you want logs (name): ")
 allClusters = custom_api_client.list_cluster_custom_object(group="cluster.k8s.io", version="v1alpha1", plural="clusters")
-# i = 0
 y = 1
 print("The following clusters were detected:")
 for x in allClusters['items']:
