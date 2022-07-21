@@ -1,5 +1,15 @@
 #!/bin/bash
 
+function listClusters() {
+  clusters=("$@")
+  y=1
+  for x in "${clusters[@]}"
+  do
+    echo -e $y'\t'$x
+    let y++
+  done
+}
+
 #KUBECTL_PATH=/kaas-bootstrap/bin/kubectl
 
 # collect parameters for log collection script
@@ -28,22 +38,12 @@ ALL_CLUSTERS=($ALL_CLUSTERS)
 # if ((${#ALL_CLUSTERS[@]} > 1))
 # then
   # read -p "Multiple clusters detected named $CLUSTER_NAME, please specify the namespace of your cluster: " CLUSTER_NAMESPACE
-y=1
-for x in ${ALL_CLUSTERS[@]}
-do
-  echo -e $y'\t'$x
-  let y++
-done
+listClusters "${ALL_CLUSTERS[@]}"
 read -p "Please specify the Management cluster (#): " CLUSTER_NUMBER
 CLUSTER_NAME=${ALL_CLUSTERS[$CLUSTER_NUMBER - 1]}
 CLUSTER_NAMESPACE=$(kubectl --kubeconfig $MGMT_KUBECONFIG get cluster --all-namespaces -o=jsonpath={'.items[?(@.metadata.name=="'$CLUSTER_NAME'")].metadata.namespace'})
 echo "The selected cluster is" $CLUSTER_NAME
 echo "The selected cluster is located in the" $CLUSTER_NAMESPACE "project"
-# else
-#   MGMT_CLUSTER_NAME = ${ALL_CLUSTERS[0]}
-#   CLUSTER_NAMESPACE=$(kubectl --kubeconfig $MGMT_KUBECONFIG get cluster --all-namespaces -o=jsonpath={'.items[?(@.metadata.name=="'$CLUSTER_NAME'")].metadata.namespace'})
-# fi
-echo "The cluster's namespace is:" $CLUSTER_NAMESPACE
 
 # maybe this or the namespace could be figured out from the kubectl
 if [[ $MGMT_CLUSTER_NAME != $CLUSTER_NAME ]]
