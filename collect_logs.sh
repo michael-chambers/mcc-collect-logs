@@ -22,12 +22,17 @@ read -e -p "Private key file for the cluster for which you want logs (path): " P
 PRIVATE_KEY=$(realpath $PRIVATE_KEY)
 
 # gather cluster name and determine cluster namespace
-read -p "Cluster for which you want logs (name): " CLUSTER_NAME
-NAMESPACED_CLUSTERS=$(kubectl --kubeconfig $MGMT_KUBECONFIG get cluster --all-namespaces -o=jsonpath={'.items[?(@.metadata.name=="'$CLUSTER_NAME'")].metadata.name'})
-NAMESPACED_CLUSTERS=($NAMESPACED_CLUSTERS)
-if ((${#NAMESPACED_CLUSTERS[@]} > 1))
+# read -p "Cluster for which you want logs (name): " CLUSTER_NAME
+ALL_CLUSTERS=$(kubectl --kubeconfig $MGMT_KUBECONFIG get cluster --all-namespaces -o=jsonpath={'.items[*].metadata.name'})
+ALL_CLUSTERS=($ALL_CLUSTERS)
+if ((${#ALL_CLUSTERS[@]} > 1))
 then
-  read -p "Multiple clusters detected named $CLUSTER_NAME, please specify the namespace of your cluster: " CLUSTER_NAMESPACE
+  # read -p "Multiple clusters detected named $CLUSTER_NAME, please specify the namespace of your cluster: " CLUSTER_NAMESPACE
+  for x in ALL_CLUSTERS
+  do
+    echo x \t ALL_CLUSTERS[i]
+  done
+  read -p "Please specify the Management cluster (#): " CLUSTER_NUMBER
 else
   CLUSTER_NAMESPACE=$(kubectl --kubeconfig $MGMT_KUBECONFIG get cluster --all-namespaces -o=jsonpath={'.items[?(@.metadata.name=="'$CLUSTER_NAME'")].metadata.namespace'})
 fi
