@@ -31,14 +31,14 @@ ALL_CLUSTERS=($ALL_CLUSTERS)
 y=1
 for x in ${ALL_CLUSTERS[@]}
 do
-  echo $y $x
+  echo -e $y'\t'$x
   let y++
 done
 read -p "Please specify the Management cluster (#): " CLUSTER_NUMBER
 CLUSTER_NAME=${ALL_CLUSTERS[$CLUSTER_NUMBER - 1]}
 CLUSTER_NAMESPACE=$(kubectl --kubeconfig $MGMT_KUBECONFIG get cluster --all-namespaces -o=jsonpath={'.items[?(@.metadata.name=="'$CLUSTER_NAME'")].metadata.namespace'})
-echo "The selected cluster is " $CLUSTER_NAME
-echo "The selected cluster is located in the  " $CLUSTER_NAMESPACE " project"
+echo "The selected cluster is" $CLUSTER_NAME
+echo "The selected cluster is located in the" $CLUSTER_NAMESPACE "project"
 # else
 #   MGMT_CLUSTER_NAME = ${ALL_CLUSTERS[0]}
 #   CLUSTER_NAMESPACE=$(kubectl --kubeconfig $MGMT_KUBECONFIG get cluster --all-namespaces -o=jsonpath={'.items[?(@.metadata.name=="'$CLUSTER_NAME'")].metadata.namespace'})
