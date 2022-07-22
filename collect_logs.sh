@@ -55,11 +55,13 @@ fi
 echo "############ BEGINNING LOG COLLECTION FOR CLUSTER " $CLUSTER_NAME " ############"
 if [[ -z ${CLUSTER_KUBECONFIG} ]]
 then
-  # if CLUSTER_KUBECONFIG is defined, then we're dealing with a regional or managed cluster, collect logs
-  /kaas-bootstrap/container-cloud collect logs --management-kubeconfig $MGMT_KUBECONFIG --key-file $PRIVATE_KEY --kubeconfig $CLUSTER_KUBECONFIG --cluster-name $CLUSTER_NAME --cluster-namespace $CLUSTER_NAMESPACE --output-dir /logs
-else
+  echo "Collecting logs on MCC Management cluster:" $CLUSTER_NAME
   # if CLUSTER_KUBECONFIG is not defined, then we're dealing with the MCC management cluster, collect logs
   /kaas-bootstrap/container-cloud collect logs --management-kubeconfig $MGMT_KUBECONFIG --key-file $PRIVATE_KEY --cluster-name $CLUSTER_NAME --cluster-namespace $CLUSTER_NAMESPACE --output-dir /logs
+else
+  # if CLUSTER_KUBECONFIG is defined, then we're dealing with a regional or managed cluster, collect logs
+  echo "Collecting logs on Regional/Managed cluster:" $CLUSTER_NAME
+  /kaas-bootstrap/container-cloud collect logs --management-kubeconfig $MGMT_KUBECONFIG --key-file $PRIVATE_KEY --kubeconfig $CLUSTER_KUBECONFIG --cluster-name $CLUSTER_NAME --cluster-namespace $CLUSTER_NAMESPACE --output-dir /logs
 fi
 
 # compress and send out logs via wormhole
