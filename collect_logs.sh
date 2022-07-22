@@ -56,5 +56,12 @@ fi
 
 # collect logs
 echo "############ BEGINNING LOG COLLECTION FOR CLUSTER " $CLUSTER_NAME " ############"
-#/kaas-bootstrap/container-cloud collect logs --management-kubeconfig $MGMT_KUBECONFIG --key-file $PRIVATE_KEY --kubeconfig $CLUSTER_KUBECONFIG --cluster-name $CLUSTER_NAME --cluster-namespace $CLUSTER_NAMESPACE --output-dir /logs
-docker run mcc-diags/collect-logs:latest -e $MGMT_KUBECONFIG -e $PRIVATE_KEY -e $CLUSTER_NAME -e $CLUSTER_KUBECONFIG -e $CLUSTER_NAMESPACE
+if [[ -z ${CLUSTER_KUBECONFIG} ]]
+  /kaas-bootstrap/container-cloud collect logs --management-kubeconfig $MGMT_KUBECONFIG --key-file $PRIVATE_KEY --kubeconfig $CLUSTER_KUBECONFIG --cluster-name $CLUSTER_NAME --cluster-namespace $CLUSTER_NAMESPACE --output-dir /logs
+else
+  /kaas-bootstrap/container-cloud collect logs --management-kubeconfig $MGMT_KUBECONFIG --key-file $PRIVATE_KEY --cluster-name $CLUSTER_NAME --cluster-namespace $CLUSTER_NAMESPACE --output-dir /logs
+fi
+# docker run mcc-diags/collect-logs:latest -e $MGMT_KUBECONFIG -e $PRIVATE_KEY -e $CLUSTER_NAME -e $CLUSTER_KUBECONFIG -e $CLUSTER_NAMESPACE
+echo "compressing logs"
+tar -zcvf logs.tgz /logs
+wormhole send logs.tgz
