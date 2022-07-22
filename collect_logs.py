@@ -51,10 +51,12 @@ clusterNamespace = allClusters['items'][int(i) - 1]['metadata']['namespace']
 print("The selected cluster is " + clusterName)
 print("The selected cluster is located in the " + clusterNamespace + " project")
 
+# ask for cluster kubeconfig file if needed
 if mgmtClusterName != clusterName:
   clusterKubeconfig = input("Specified cluster is not the Management cluster, please specify the cluster Kubeconfig file (path): ")
   clusterKubeconfig = os.path.realpath(clusterKubeconfig)
 
+# collect logs
 print("############ BEGINNING LOG COLLECTION FOR CLUSTER " + clusterName + " ############")
 try:
   clusterKubeconfig
@@ -68,6 +70,7 @@ else:
   print("Collecting logs on Regional/Managed cluster: " + clusterName)
   collectLogs = subprocess.Popen(['/kaas-bootstrap/container-cloud', 'collect', 'logs', '--management-kubeconfig', mgmtKubeconfig, '--key-file', privateKey, '--kubeconfig', clusterKubeconfig, '--cluster-name', clusterName, '--cluster-namespace', clusterNamespace, '--output-dir', '/logs'])
   collectLogs.wait()
+
 # compress and send out logs via wormhole
 print("compressing logs")
 os.system("tar -zcvf logs.tgz /logs")
