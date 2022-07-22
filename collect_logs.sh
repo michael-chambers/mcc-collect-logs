@@ -54,6 +54,7 @@ fi
 # collect logs
 echo "############ BEGINNING LOG COLLECTION FOR CLUSTER " $CLUSTER_NAME " ############"
 if [[ -z ${CLUSTER_KUBECONFIG} ]]
+then
   # if CLUSTER_KUBECONFIG is defined, then we're dealing with a regional or managed cluster, collect logs
   /kaas-bootstrap/container-cloud collect logs --management-kubeconfig $MGMT_KUBECONFIG --key-file $PRIVATE_KEY --kubeconfig $CLUSTER_KUBECONFIG --cluster-name $CLUSTER_NAME --cluster-namespace $CLUSTER_NAMESPACE --output-dir /logs
 else
