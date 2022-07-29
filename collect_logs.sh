@@ -22,7 +22,7 @@ if ((${#DEFAULT_CLUSTERS[@]} > 1))
 then
   echo "Multiple clusters deteced in MCC's default namespace"
   listClusters "${DEFAULT_CLUSTERS[@]}"
-  read -p "Please specify the Management cluster (#): " MGMT_CLUSTER_NUMBER
+  read -p "Please specify the cluster you want to collect logs for (#): " MGMT_CLUSTER_NUMBER
   MGMT_CLUSTER_NAME=${DEFAULT_CLUSTERS[$MGMT_CLUSTER_NUMBER - 1]}
 else
   MGMT_CLUSTER_NAME=$(kubectl --kubeconfig $MGMT_KUBECONFIG --namespace default get cluster -o=jsonpath={'.items[0].metadata.name'})
