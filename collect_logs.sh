@@ -20,7 +20,7 @@ DEFAULT_CLUSTERS=$(kubectl --kubeconfig $MGMT_KUBECONFIG --namespace default get
 DEFAULT_CLUSTERS=($DEFAULT_CLUSTERS)
 if ((${#DEFAULT_CLUSTERS[@]} > 1))
 then
-  echo "Multiple clusters deteced in MCC's default namespace"
+  echo "Multiple clusters detected in MCC's default namespace"
   listClusters "${DEFAULT_CLUSTERS[@]}"
   read -p "Please specify the Management cluster (#): " MGMT_CLUSTER_NUMBER
   MGMT_CLUSTER_NAME=${DEFAULT_CLUSTERS[$MGMT_CLUSTER_NUMBER - 1]}
