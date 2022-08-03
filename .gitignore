@@ -2,3 +2,4 @@ files/
 logs.tgz
 logs/
 python/
+.DS_Store
